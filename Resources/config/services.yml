@@ -1,0 +1,3 @@
+services:
+    gnugat_query_bus.query_bus:
+        class: Gnugat\QueryBus\QueryBus
