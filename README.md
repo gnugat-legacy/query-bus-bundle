@@ -1,4 +1,4 @@
-# QueryBus Bundle [![SensioLabsInsight](https://insight.sensiolabs.com/projects/3ed6f368-d2de-4eb8-a115-d872adda8c7e/mini.png)](https://insight.sensiolabs.com/projects/3ed6f368-d2de-4eb8-a115-d872adda8c7e) [![Travis CI](https://travis-ci.org/gnugat/query-bus-bundle.png)](https://travis-ci.org/gnugat/query-bus-bundle)
+# QueryBus Bundle [![SensioLabsInsight](https://insight.sensiolabs.com/projects/6643197f-15e8-48c1-9631-86dd0a3547c3/mini.png)](https://insight.sensiolabs.com/projects/6643197f-15e8-48c1-9631-86dd0a3547c3) [![Travis CI](https://travis-ci.org/gnugat/query-bus-bundle.png)](https://travis-ci.org/gnugat/query-bus-bundle)
 
 [QueryBus](http://gnugat.github.io/query-bus) integration in [Symfony](http://symfony.com).
 
