@@ -1,213 +1,65 @@
-# QueryBus Bundle [![SensioLabsInsight](https://insight.sensiolabs.com/projects/6643197f-15e8-48c1-9631-86dd0a3547c3/mini.png)](https://insight.sensiolabs.com/projects/6643197f-15e8-48c1-9631-86dd0a3547c3) [![Travis CI](https://travis-ci.org/gnugat/query-bus-bundle.png)](https://travis-ci.org/gnugat/query-bus-bundle)
+---
+currentMenu: home
+---
+# Couscous Light template
 
-[QueryBus](http://gnugat.github.io/query-bus) integration in [Symfony](http://symfony.com).
+![](screenshot.png)
 
-## Installation
+## Usage
 
-QueryBusBundle can be installed using [Composer](http://getcomposer.org/):
+To use the template, set it up in your `couscous.yml` configuration file:
 
-    composer require "gnugat/query-bus-bundle:~2.0"
-
-We then need to register it in our application:
-
-```php
-<?php
-// File: app/AppKernel.php
-
-use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\Config\Loader\LoaderInterface;
-
-class AppKernel extends Kernel
-{
-    public function registerBundles()
-    {
-        $bundles = array(
-            // ...
-            new Gnugat\QueryBusBundle\GnugatQueryBusBundle(),
-        );
-        // ...
-    }
-
-    // ...
-}
+```yaml
+template:
+    url: https://github.com/CouscousPHP/Template-Light
 ```
 
-## Usage example
+## Configuration
 
-Let's take the following entity:
+Here are all the variables you can set in your `couscous.yml`:
 
-```php
-<?php
-// File: src/AppBundle/Entity/Article.php
+```yaml
+# Base URL of the published website
+baseUrl: http://username.github.io/project
 
-namespace AppBundle\Entity;
+# Used to link to the GitHub project
+github:
+    user: myself
+    repo: my-project
 
-use Doctrine\ORM\Mapping as ORM;
+title: My project
+subTitle: This is a great project.
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="article")
- */
-class Article
-{
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
-
-    /**
-     * @ORM\Column(type="string")
-     */
-    private $title;
-
-    /**
-     * @ORM\Column(type="text")
-     */
-    private $content;
-
-    public function __construct($title, $content)
-    {
-        $this->title = $title;
-        $this->content = $content;
-    }
-
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    public function getContent()
-    {
-        return $this->content;
-    }
-}
+# The left menu bar
+menu:
+    items:
+        home:
+            text: Home page
+            # You can use relative urls
+            relativeUrl: doc/faq.html
+        foo:
+            text: Another link
+            # Or absolute urls
+            absoluteUrl: https://example.com
 ```
 
-In order to get one article by ID using QueryBundle, we have first to create an
-[Interrogatory Message](http://verraes.net/2015/01/messaging-flavours/):
+Note that the menu items can also contain HTML:
 
-```php
-<?php
-// File: src/AppBundle/QueryBus/GetArticle.php
-
-namespace AppBundle\QueryBus;
-
-class GetArticle
-{
-    public $id;
-
-    public function __construct($id)
-    {
-        if (null === $id) {
-            throw new \InvalidArgumentException('Missing required argument: ID');
-        }
-        $this->id = $id;
-    }
-}
+```yaml
+home:
+    text: "<i class=\"fa fa-github\"></i> Home page"
+    relativeUrl: doc/faq.html
 ```
 
-We then have to create a `QueryMatcher`:
+## Menu
 
-```php
-<?php
-// File: src/AppBundle/Marshaller/ArticleMarshaller.php
+To set the current menu item (i.e. highlighted menu item), set the `currentMenu`
+key in the Markdown files:
 
-namespace AppBundle\QueryBus;
+```markdown
+---
+currentMenu: home
+---
 
-use AppBundle\Entity\Article;
-use Doctrine\Common\Persistence\ObjectManager;
-use Gnugat\QueryBus\QueryMatcher;
-
-class GetArticleMatcher implements QueryMatcher
-{
-    private $objectManager;
-
-    public function __construct(ObjectManager $objectManager)
-    {
-        $this->objectManager = $objectManager;
-    }
-
-    public function supports($query)
-    {
-        return $query instanceof GetArticle;
-    }
-
-    public function match($query)
-    {
-        $article = $this->objectManager->find('AppBundle:Article', $query->id);
-        if (null === $article) {
-            throw new \DomainException(sprintf('Could not find article for ID "%s"', $query->id));
-        }
-
-        return $article;
-    }
-}
+# Welcome
 ```
-
-The next step is to define it as a service:
-
-```
-# File: app/config/services.yml
-services:
-    app.get_article_matcher:
-        class: AppBundle\QueryBus\GetArticleMatcher
-        tags:
-            - { name: gnugat_query_bus.query_matcher }
-```
-
-> **Note**: Thanks to the ` gnugat_query_bus.query_matcher` tag, the `GetArticleMatcher`
-> will be registered in the main `gnugat_query_bus.query_bus` service.
-
-Finally we can request the article:
-
-```php
-<?php
-// File: src/AppBundle/Controller/ArticleController.php
-
-namespace AppBundle\Controller;
-
-use AppBundle\QueryBus\GetArticle;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
-
-class ArtcileController extends Controller
-{
-    /**
-     * @Route("/api/v1/articles/{id}")
-     * @Method({"GET"})
-     */
-    public function viewAction($id)
-    {
-        $article = $this->get('gnugat_query_bus.query_bus')->match(new GetArticle($id));
-
-        return new JsonResponse(array(
-            'id' => $article->getId(),
-            'title' => $article->getTitle(),
-            'content' => $article->getContent(),
-        ), 200);
-    }
-}
-```
-
-## Further documentation
-
-You can see the current and past versions using one of the following:
-
-* the `git tag` command
-* the [releases page on Github](https://github.com/gnugat/query-bus-bundle/releases)
-* the file listing the [changes between versions](CHANGELOG.md)
-
-You can find more documentation at the following links:
-
-* [copyright and MIT license](LICENSE)
-* [versioning and branching models](VERSIONING.md)
-* [contribution instructions](CONTRIBUTING.md)
