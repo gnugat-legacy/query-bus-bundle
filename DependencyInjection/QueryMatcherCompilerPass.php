@@ -28,8 +28,7 @@ class QueryMatcherCompilerPass implements CompilerPassInterface
         $definition = $container->getDefinition('gnugat_query_bus.query_bus');
         $taggedServices = $container->findTaggedServiceIds('gnugat_query_bus.query_matcher');
         foreach ($taggedServices as $id => $attributes) {
-            $priority = isset($attributes[0]['priority']) ? $attributes[0]['priority'] : 0;
-            $definition->addMethodCall('add', array(new Reference($id), $priority));
+            $definition->addMethodCall('add', array(new Reference($id)));
         }
     }
 }

@@ -6,7 +6,7 @@
 
 QueryBusBundle can be installed using [Composer](http://getcomposer.org/):
 
-    composer require "gnugat/query-bus-bundle:~1.0"
+    composer require "gnugat/query-bus-bundle:~2.0"
 
 We then need to register it in our application:
 
