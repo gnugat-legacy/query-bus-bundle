@@ -1,0 +1,17 @@
+template:
+    url: https://github.com/CouscousPHP/Template-Light.git
+
+baseUrl: http://gnugat.github.io/query-bus-bundle
+
+title: QueryBusBundle
+subTitle: QueryBus integration in Symfony.
+
+github:
+    user: gnugat
+    repo: query-bus-bundle
+
+menu:
+    items:
+        home:
+            text: Home
+            relativeUrl:

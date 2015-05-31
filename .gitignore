@@ -1,6 +1,7 @@
 # Temporary
 /Tests/app/cache
 /Tests/app/logs
+/.couscous
 
 # Third party
 /vendor
