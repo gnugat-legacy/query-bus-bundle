@@ -23,5 +23,11 @@ class GnugatQueryBusExtension extends Extension
         $fileLocator = new FileLocator(__DIR__.'/../Resources/config');
         $loader = new YamlFileLoader($container, $fileLocator);
         $loader->load('services.yml');
+
+        $this->addClassesToCompile(array(
+            'Gnugat\\QueryBus\\QueryBus',
+            'Gnugat\\QueryBus\\QueryMatcher',
+            'Gnugat\\QueryBus\\NotSupportedException',
+        ));
     }
 }
